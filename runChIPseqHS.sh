@@ -77,7 +77,7 @@ for file in "$dir"* ; do
     echo ""
     echo "1. trimming $name"
     echo ""
-    trim_galore --fastqc --fastqc_args " --outdir HStrimmed/fastqc/" -a ATCGGAAGAGCAC $file -o HStrimmed/ #picks up more adapters
+    trim_galore --fastqc --fastqc_args " --outdir HStrimmed/fastqc/" -a GATCGGAAGAGCAC $file -o HStrimmed/ #picks up more adapters
 
     echo ""
     echo "2. aligning $name to hg19 with bowtie"

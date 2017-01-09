@@ -83,7 +83,7 @@ for file in "$dir"* ; do
     echo ""
     # mkdir -p ${name}_aligned/
 
-    (bowtie2 -p 4 -x /data/refs/mm10/mm10 -U trimmed/$trimfile | samtools view -Suo - - | \
+    (bowtie2 -p 4 -x /data/refs/mm10/genome -U trimmed/$trimfile | samtools view -Suo - - | \
     samtools sort - aligned/${name}.sorted) 2> alignment_summaries/${name}_alignment.txt
 
     echo ""

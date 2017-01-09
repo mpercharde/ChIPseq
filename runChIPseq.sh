@@ -84,7 +84,7 @@ for file in "$dir"* ; do
     # mkdir -p ${name}_aligned/
 
     (bowtie2 -p 4 -x /data/refs/mm10/genome -U trimmed/$trimfile | samtools view -Suo - - | \
-    samtools sort - -o aligned/${name}.sorted) 2> alignment_summaries/${name}_alignment.txt
+    samtools sort - -o aligned/${name}.sorted.bam) 2> alignment_summaries/${name}_alignment.txt
 
     echo ""
     echo "3. deduplicating $name bam file"

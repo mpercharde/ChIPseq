@@ -58,9 +58,11 @@ if [ "$gz" == "true" ]; then
   echo "your file is compressed, trim and align will be run on .gz files"
 fi
 
-mkdir -p trimmed/fastqc/
-mkdir -p aligned/
-mkdir -p alignment_summaries/
+mkdir -p HStrimmed/fastqc/
+mkdir -p HSaligned/
+mkdir -p HSalignment_summaries/
+mkdir -p HSsorted_bam/
+mkdir -p HSdedup_bam/
 
 for file in "$dir"* ; do
     echo ""
@@ -75,26 +77,26 @@ for file in "$dir"* ; do
     echo ""
     echo "1. trimming $name"
     echo ""
-    trim_galore --fastqc --fastqc_args " --outdir trimmed/fastqc/" -a ATCGGAAGAGCAC $file -o trimmed/ #picks up more adapters
+    trim_galore --fastqc --fastqc_args " --outdir HStrimmed/fastqc/" -a ATCGGAAGAGCAC $file -o HStrimmed/ #picks up more adapters
 
     echo ""
     echo "2. aligning $name to hg19 with bowtie"
     echo ""
     # mkdir -p ${name}_aligned/
 
-    (bowtie2 -p 4 -x /data/refs/hg19/genome -U trimmed/$trimfile | samtools view -Suo - - | \
-    samtools sort - -o aligned/${name}.sorted.bam) 2> alignment_summaries/${name}_alignment.txt
+    (bowtie2 -p 4 -x /data/refs/hg19/genome -U HStrimmed/$trimfile | samtools view -Suo - - | \
+    samtools sort - -o HSsorted_bam/${name}.sorted.bam) 2> HSalignment_summaries/${name}_alignment.txt
 
     echo ""
     echo "3. deduplicating $name bam file"
     echo ""
-    samtools rmdup -s aligned/${name}.sorted.bam aligned/${name}.sorted.dedup.bam
+    samtools rmdup -s HSsorted_bam/${name}.sorted.bam HSdedup_bam/${name}.sorted.dedup.bam
 
     echo ""
     echo "4. Generating bam index for $name"
     echo ""
-    samtools index aligned/${name}.sorted.bam aligned/${name}.sorted.bai
-    samtools index aligned/${name}.sorted.dedup.bam aligned/${name}.sorted.dedup.bai
+    samtools index HSsorted_bam/${name}.sorted.bam HSsorted_bam/${name}.sorted.bai
+    samtools index HSdedup_bam/${name}.sorted.dedup.bam HSdedup_bam/${name}.sorted.dedup.bai
 
     echo ""
     echo "$name DONE!"

@@ -61,6 +61,8 @@ fi
 mkdir -p trimmed/fastqc/
 mkdir -p aligned/
 mkdir -p alignment_summaries/
+mkdir -p sorted_bam/
+mkdir -p dedup_bam/
 
 for file in "$dir"* ; do
     echo ""
@@ -83,18 +85,18 @@ for file in "$dir"* ; do
     # mkdir -p ${name}_aligned/
 
     (bowtie2 -p 4 -x /data/refs/mm10/genome -U trimmed/$trimfile | samtools view -Suo - - | \
-    samtools sort - -o aligned/${name}.sorted.bam) 2> alignment_summaries/${name}_alignment.txt
+    samtools sort - -o sorted_bam/${name}.sorted.bam) 2> alignment_summaries/${name}_alignment.txt
 
     echo ""
     echo "3. deduplicating $name bam file"
     echo ""
-    samtools rmdup -s aligned/${name}.sorted.bam aligned/${name}.sorted.dedup.bam
+    samtools rmdup -s sorted_bam/${name}.sorted.bam dedup_bam/${name}.sorted.dedup.bam
 
     echo ""
     echo "4. Generating bam index for $name"
     echo ""
-    samtools index aligned/${name}.sorted.bam aligned/${name}.sorted.bai
-    samtools index aligned/${name}.sorted.dedup.bam aligned/${name}.sorted.dedup.bai
+    samtools index sorted_bam/${name}.sorted.bam sorted_bam/${name}.sorted.bai
+    samtools index dedup_bam//${name}.sorted.dedup.bam dedup_bam//${name}.sorted.dedup.bai
 
     echo ""
     echo "$name DONE!"
